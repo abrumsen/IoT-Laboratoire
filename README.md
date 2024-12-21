@@ -128,10 +128,11 @@ Le bootloader comporte 2 modes de fonctionnement:
 - Flashing "BootLoader Mode" (Permet le chargement d'une application en mémoire)
 - Booting 
 
-![[Card-Memory.png]]
+![Card-Memory.png](images/Card-Memory.png)
 - L'Application (Vert)
 
-![[Application.png]]
+![Application.png](images/Application.png)
+
 L'application contient :
 - Kernel
 - Drivers
@@ -175,12 +176,13 @@ Dans notre réseau Thread, nous avions 4 appareils connectés. Les rôles dans u
     Si aucun Leader n’existe, une nouvelle élection est déclenchée automatiquement.
 ### **Nombre maximum de machines sur un réseau Thread :**
 
-![[MaximumDevices.png]]
+![MaximumDevices.png](images/MaximumDevices.png)
+
 Plus d'informations sur les rôles :
 [https://openthread.io/guides/thread-primer/node-roles-and-types](https://openthread.io/guides/thread-primer/node-roles-and-types "https://openthread.io/guides/thread-primer/node-roles-and-types")
 
 Dans notre configuration initiale, notre appareil a été désigné comme leader et et le réseau est configuré en topologie full mesh (tous les routeurs sont connectés les uns aux autres), fournissant une redondance élevée:
-![[Initial.png]]
+![Initial.png](images/Initial.png)
 ### Test de la Topologie
 Pour tester le comportement de la topologie Thread, nous avons éloigné l'appareil jouant le rôle de Leader. Cela nous a permis d'observer les réactions dynamiques du réseau, notamment la redistribution des rôles.
 #### Absence du Leader
@@ -192,11 +194,11 @@ Pendant cette période de transition, le réseau continue de fonctionner, bien q
 #### Réélection d'un nouveau Leader
 Apres un certain délai, un nouveau Leader est élu parmi les routeurs disponibles :
 
-![[NewLeader.png]]
+![NewLeader.png](images/NewLeader.png)
 #### Child
 un « Child » est une machine qui n'a accès au réseau que par le biais d'une connexion avec son parent.
 Voici un exemple wireshark d'une nouvelle connection sur le réseau par un enfant :
-![[wireshark-child.png]]
+![wireshark-child.png](images/wireshark-child.png)
 - Une carte démarre en mode **End Device**.
 - Lorsqu’elle détecte que le réseau a besoin d’un routeur, elle envoie des messages **MLE Parent Request** pour établir une connexion avec un Leader.
 - Si le réseau valide la candidature, la carte devient routeur en utilisant l'id donné par le leader.
@@ -228,7 +230,7 @@ Voici ce qui se passe à chaque couche concernée, de bas en haut :
 - L4-7 : Thread fournissant divers services de réseau et support d'application
 #### Etablissement des liens :
 
-![[wireshark-link.png]]
+![wireshark-link.png](images/wireshark-link.png)
 1. Le nouveau routeur envoie une demande d'association en multicast aux routeurs voisins.
 2. Les routeurs répondent par des messages d'acceptation et de demande d'association.
 3. Le nouveau routeur répond à chaque routeur par une instruction unicast Link Accept pour établir la liaison routeur-routeur.
@@ -263,7 +265,8 @@ Global :
 - A toujours un préfixe de `2000::/3`
 
 La commande `ipaddr` liste toutes les adresses IPv6 attribuées à l'interface Thread.
-![[ipaddr.png]]
+![ipaddr.png](images/ipaddr.png)
+
 Les préfixes nous permettent d'identifier les types d'interfaces suivantes:
 ```
 fdde:ad00:beef::ff:fe00:6800          # RLOC
@@ -271,7 +274,7 @@ fdde:ad00:beef::e294:7a7f:ab01:893f   # ML-EID
 fe80::e01e:8ae0:32ce:6218             # LLA
 ```
 Si notre machine était leader voici un résultat possible :
-![[CLI-Config.png]]
+![CLI-Config.png](images/CLI-Config.png)
 #### Types de paquets MLE :
 
 1. Link request:
@@ -313,7 +316,7 @@ Si notre machine était leader voici un résultat possible :
 - Fournit une configuration spécifique à l'appareil
 - Demande la confirmation finale de l'attachement au réseau
 
-8. Child ID Response
+7. Child ID Response
 - Confirme l'appartenance du dispositif enfant au réseau
 - Attribue des identifiants spécifiques au réseau
 - Achève le processus d'intégration du dispositif
@@ -332,7 +335,8 @@ Si notre machine était leader voici un résultat possible :
 Analyse des paquets:
 - *MLE Parent Request* envoyé pour se connecter à un router parent.
 - Réponse avec des messages *MLE Parent Response* du routeur parent
-![[wireshark-child.png]]
+
+![wireshark-child.png](images/wireshark-child.png)
 ### Send UDP
 #### Configuration
 ##### Node 1:
@@ -341,7 +345,7 @@ Sur le Node 1, ouvrez et liez le socket UDP.
 udp open
 udp bind :: 1234
 ```
-Le : : spécifie que l'adresse IPv6 est non spécifiée (équivalent au 0.0.0.0 en IPv4).
+Le :: spécifie que l'adresse IPv6 est non spécifiée (équivalent au 0.0.0.0 en IPv4).
 ##### Node 2:
 Sur le nœud 2, ouvrez le socket UDP et envoyez un message simple.
 ```
@@ -350,7 +354,7 @@ udp send fdde:ad00:beef:0:0:ff:fe00:6800 1234 hello
 ```
 #### Observation
 Dans Wireshark, les paquets UDP apparaissent avec le port source 1234 et contiennent le message envoyé.
-![[UDP-Wireshark.png]]
+![UDP-Wireshark.png](images/UDP-Wireshark.png)
 ### COAP
 #### Comparaison CoAP vs MQTT
 
@@ -360,7 +364,8 @@ Dans Wireshark, les paquets UDP apparaissent avec le port source 1234 et contien
 | Transport              | UDP                                                 | TCP                       |
 | Confirmations          | Supporte les messages confirmables/non-confirmables | Fiabilité assurée par TCP |
 | Efficacité             | Léger, idéal pour IoT à faible bande passante       | Plus lourd, nécessite TCP |
-![[Pasted image 20241211164939.png]]
+
+![Pasted image 20241211164939.png](images/Pasted image 20241211164939.png)
 #### Différence GET/PUT CoAP
 ##### Node 1 (server)
 ```
@@ -381,25 +386,29 @@ coap response sent
 Dans Wireshark, on observe :
 - Bit de confirmation à 1
 - Un paquet « content » contenant les données relatives aux ressources est également visible.
-![[Wireshark-Get-Confirm.png]]
+
+![Wireshark-Get-Confirm.png](images/Wireshark-Get-Confirm.png)
 ##### Get sans confirmation :
 `coap get fdde:ad00:beef:0:0:ff:fe00:6800 test`
 Dans Wireshark, on observe :
 - Bit de confirmation à 0
 - Un paquet « content » contenant les données relatives aux ressources est également visible.
-![[Wireshark-Get-NoConfirm.png]]
+
+![Wireshark-Get-NoConfirm.png](images/Wireshark-Get-NoConfirm.png)
 ##### Put avec confirmation :
 `coap put fdde:ad00:beef:0:0:ff:fe00:6800 test -c`
 Dans Wireshark, on observe :
 - Bit de confirmation à 1
 - Une réponse ACK est envoyée
-![[Wireshark-Put-Confirm.png]]
+
+![Wireshark-Put-Confirm.png](images/Wireshark-Put-Confirm.png)
 ##### Put sans confirmation :
 `coap put fdde:ad00:beef:0:0:ff:fe00:6800 test`
 Dans Wireshark, on observe :
 - Bit de confirmation à 0
 - Pas de paquets ACK de confirmation
-![[Wireshark-Put-NoConfirm.png]]
+
+![Wireshark-Put-NoConfirm.png](images/Wireshark-Put-NoConfirm.png)
 # Séance 3
 ## Build de l’image custom
 
@@ -412,7 +421,7 @@ Dans Wireshark, on observe :
 ## Commissioner
 Le rôle du commissioner est de faciliter l'ajout de nouveaux nœuds au réseau Thread, en ne demandant qu'un mot de passe pour rejoindre le réseau. Une fois ce mot de passe fourni, le commissionner envoie sur un canal sécurisé les détails du réseau Thread.
 ### Démarrage du Commissioner :
-```
+```bash
 uart:~$ ot dataset init new
 Done
 uart:~$ ot dataset commit active
@@ -434,7 +443,7 @@ uart:~$ ot joiner start N0RD1C
 ### Observation sur WireShark :
 Session DTLS (Datagram Transport Layer Security) après réception et réponse au Discovery Request. Durant cette session, on échange les credentials de manière sécurisée afin que l'appareil puisse rejoindre le réseau Thread.
 
-![[wireshark-joiner.png]]
+![wireshark-joiner.png](images/wireshark-joiner.png)
 
 Ensuite, le joiner fait `ot thread start` pour rejoindre le réseau.
 #### Petitioning 
@@ -455,12 +464,13 @@ Cela se produit dans les deux scénarios (Commissioning interne ou externe) :
 1. Le Joiner, envoie un message de Discovery Request sur chaque channel.
 2. Le Joiner Router reçoit ce message et répond avec un message de Discovery Response, contenant les identifiants du réseau et les steering data dans le payload.
 3. Le Joiner utilise les informations reçues pour identifier le réseau auquel se connecter.
-![[wireshark-joiner.png]]
+![wireshark-joiner.png](images/wireshark-joiner.png)
 ## OTBR
 Un routeur OpenThread Border (OTBR) relie le réseau Thread à internet, permettant aux appareils du réseau Thread de communiquer avec des services externes.
 ### Ping
 On voit l'envoi, des ack et le reply de l'addresse synthétisée lors du 6to4:
-![[wireshark-ping.png]]
+![wireshark-ping.png](images/wireshark-ping.png)
+
 Commandes dans le CLI:
 ```bash
 uart:~$ ot ping 10.43.29.113
@@ -476,7 +486,7 @@ Done
 - L’adresse **OMR** permet à un nœud du réseau Thread de communiquer avec des services externes via le Border Router, en agissant comme une adresse routable hors du réseau Thread.
 
 **Expliquer le rôle de ces adresses IP**
-Voir [[Rapport#Adresses données par ipaddr|Séance 2]]
+Voir Séance 2
 ```
 fd11:22:0:0:3e52:4e4b:45cb:87e2           # OMR
 fe80:0:0:0:786b:e8fc:b690:c72             # LLA
@@ -489,29 +499,29 @@ fdb1:2403:1b00:f1a5:40a:27a8:a9ed:8eae    # ML-EID
 ```
 ### UDP
 On remarque que le ack correspond au done, et que on fait bien du 6to4 
-```
+```bash
 uart:~$ ot udp send 10.43.29.113 12345 Kinet&Brumsen 
 Sending to synthesized IPv6 address: fdb9:d1aa:df78:2:0:0:a2b:1d71 
 Done
 ```
-![[wireshark-UDP.png]]
-![[UDP-Result.png]]
+![wireshark-UDP.png](images/wireshark-UDP.png)
+![UDP-Result.png](images/UDP-Result.png)
 ### SRP
 SRP et mDNS permettent de découvrir et d'enregistrer des services dans le réseau Thread.
 - mDNS (Multicast DNS) : permet la résolution de noms de domaine sur le réseau local sans serveur DNS centralisé.
 - SRP (Service Registration Protocol) : Permet d'enregistrer des services dans le réseau, ce qui facilite leur découverte par d'autres nœuds.
 #### Configuration
-```
+```bash
 > srp client host name BrumsenKinet
 Done
 ```
 Définir le nom de l'hôte
-```
+```bash
 > srp client service add ins1 _thread._tcp 12345
 Done
 ```
 Ajouter un service avec un nom d'instance, un nom de service, un numéro de port.
-```
+```bash
 > srp client start <serveraddr> <serverport>
 Done
 ```
