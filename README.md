@@ -365,7 +365,7 @@ Dans Wireshark, les paquets UDP apparaissent avec le port source 1234 et contien
 | Confirmations          | Supporte les messages confirmables/non-confirmables | Fiabilité assurée par TCP |
 | Efficacité             | Léger, idéal pour IoT à faible bande passante       | Plus lourd, nécessite TCP |
 
-![Pasted image 20241211164939.png](images/Pasted image 20241211164939.png)
+![mqtt-vs-coap.png](images/mqtt-vs-coap.png)
 #### Différence GET/PUT CoAP
 ##### Node 1 (server)
 ```
